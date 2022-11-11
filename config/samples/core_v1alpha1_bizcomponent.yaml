@@ -1,0 +1,6 @@
+apiVersion: core.wutong.io/v1alpha1
+kind: BizComponent
+metadata:
+  name: bizcomponent-sample
+spec:
+  # TODO(user): Add fields here

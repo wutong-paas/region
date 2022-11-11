@@ -1,0 +1,59 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizcomponents
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizcomponents/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizcomponents/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - syscomponents
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - syscomponents/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - syscomponents/status
+  verbs:
+  - get
+  - patch
+  - update

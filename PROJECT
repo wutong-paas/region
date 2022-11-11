@@ -1,0 +1,36 @@
+componentConfig: true
+domain: wutong.io
+layout:
+- go.kubebuilder.io/v4-alpha
+multigroup: true
+projectName: region
+repo: github.com/wutong-paas/region
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: wutong.io
+  group: core
+  kind: Component
+  path: github.com/wutong-paas/region/apis/core/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: wutong.io
+  group: core
+  kind: BizComponent
+  path: github.com/wutong-paas/region/apis/core/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: wutong.io
+  group: core
+  kind: SysComponent
+  path: github.com/wutong-paas/region/apis/core/v1alpha1
+  version: v1alpha1
+version: "3"

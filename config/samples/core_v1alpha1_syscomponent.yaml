@@ -1,0 +1,6 @@
+apiVersion: core.wutong.io/v1alpha1
+kind: SysComponent
+metadata:
+  name: syscomponent-sample
+spec:
+  # TODO(user): Add fields here

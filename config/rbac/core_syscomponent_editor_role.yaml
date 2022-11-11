@@ -1,0 +1,24 @@
+# permissions for end users to edit syscomponents.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: syscomponent-editor-role
+rules:
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - syscomponents
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - syscomponents/status
+  verbs:
+  - get

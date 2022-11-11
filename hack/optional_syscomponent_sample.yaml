@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wt-syscomponent-config
+  namespace: wt-system
+  labels:
+    creator: Wutong
+data:
+  syscomponents.yaml: |
+    test-redis:
+      availableVersions:
+        17.3.8:
+          helmChartName: redis
+          helmRepoName: bitnami
+          helmRepoUrl: https://charts.bitnami.com/bitnami
+      description: 测试系统组件 Redis
+      installWay: helm
+      namespace: test
+    wutong-gateway:
+      availableVersions:
+        v0.1.0:
+          applyFileUrl: https://raw.githubusercontent.com/wutong-paas/wutong-gateway/v0.1.0/deploy/manifests.yaml
+        v1.0.0:
+          applyFileUrl: https://raw.githubusercontent.com/wutong-paas/wutong-gateway/v1.0.0/deploy/manifests.yaml
+      description: 梧桐容器平台网关组件
+      installWay: apply
+      namespace: wt-system
+    wutong-observer:
+      availableVersions:
+        v0.1.0:
+          helmChartName: wutong-observer
+          helmRepoName: wutong-observer
+          helmRepoUrl: https://wutong-paas.github.io/wutong-observer
+        v0.1.1:
+          helmChartName: wutong-observer
+          helmRepoName: wutong-observer
+          helmRepoUrl: https://wutong-paas.github.io/wutong-observer
+      description: 梧桐容器平台可观测组件
+      installWay: helm
+      namespace: wt-system

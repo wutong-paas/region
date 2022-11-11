@@ -1,0 +1,24 @@
+# permissions for end users to edit bizcomponents.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: bizcomponent-editor-role
+rules:
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizcomponents
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizcomponents/status
+  verbs:
+  - get
