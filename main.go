@@ -68,7 +68,7 @@ func main() {
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
 	var err error
-	syncPeriod := 30 * time.Second
+	syncPeriod := 60 * time.Second
 	options := ctrl.Options{Scheme: scheme, SyncPeriod: &syncPeriod}
 	if configFile != "" {
 		options, err = options.AndFrom(ctrl.ConfigFile().AtPath(configFile))
@@ -96,6 +96,20 @@ func main() {
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "SysComponent")
+		os.Exit(1)
+	}
+	if err = (&corecontrollers.BizTeamReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "BizTeam")
+		os.Exit(1)
+	}
+	if err = (&corecontrollers.BizApplicationReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "BizApplication")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

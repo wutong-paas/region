@@ -8,6 +8,32 @@ rules:
 - apiGroups:
   - core.wutong.io
   resources:
+  - bizapplications
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizapplications/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizapplications/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - core.wutong.io
+  resources:
   - bizcomponents
   verbs:
   - create
@@ -27,6 +53,32 @@ rules:
   - core.wutong.io
   resources:
   - bizcomponents/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizteams
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizteams/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizteams/status
   verbs:
   - get
   - patch

@@ -22,6 +22,9 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
+	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/client-go/rest"
+	controllerruntime "sigs.k8s.io/controller-runtime"
 
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/cli"
@@ -34,7 +37,18 @@ var (
 
 func actionConfiguration(namespace string) *action.Configuration {
 	actionConfig := new(action.Configuration)
-	actionConfig.Init(settings.RESTClientGetter(), namespace, os.Getenv("HELM_DRIVER"), debug)
+
+	restConfig := controllerruntime.GetConfigOrDie()
+	cliConfig := genericclioptions.NewConfigFlags(false)
+	cliConfig.APIServer = &restConfig.Host
+	cliConfig.BearerToken = &restConfig.BearerToken
+	cliConfig.Namespace = &namespace
+	wrapper := func(*rest.Config) *rest.Config {
+		return restConfig
+	}
+	cliConfig.WrapConfigFn = wrapper
+
+	actionConfig.Init(cliConfig, namespace, os.Getenv("HELM_DRIVER"), debug)
 	registryClient, _ := registry.NewClient(
 		registry.ClientOptDebug(settings.Debug),
 		registry.ClientOptEnableCache(true),

@@ -54,8 +54,8 @@ const (
 	SysComponentInstalling   SysComponentStatus = "Installing"
 	SysComponentUnInstalling SysComponentStatus = "Uninstalling"
 	SysComponentUpgrading    SysComponentStatus = "Upgrading"
-	SysComponentUnAbnormal   SysComponentStatus = "Abnormal"
-	SysComponentUnUnknown    SysComponentStatus = "Unknown"
+	// SysComponentUnAbnormal   SysComponentStatus = "Abnormal"
+	// SysComponentUnUnknown    SysComponentStatus = "Unknown"
 )
 
 type SysComponent struct {

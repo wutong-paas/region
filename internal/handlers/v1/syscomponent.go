@@ -22,6 +22,7 @@ import (
 )
 
 func ListSysComponents(c *gin.Context) {
+
 	sysComponents, err := services.DefaultServicer().ListSysComponents()
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -41,6 +42,45 @@ func InstallSysComponent(c *gin.Context) {
 
 	c.Bind(&data)
 	err := services.DefaultServicer().InstallComponnet(data.Name, data.Version)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "ok",
+	})
+}
+
+func UninstallSysComponent(c *gin.Context) {
+	var data struct {
+		Name string `json:"name" binding:"required"`
+	}
+
+	c.Bind(&data)
+	err := services.DefaultServicer().UninstallComponnet(data.Name)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "ok",
+	})
+}
+
+func UpgradeSysComponent(c *gin.Context) {
+	var data struct {
+		Name    string `json:"name" binding:"required"`
+		Version string `json:"version"`
+	}
+
+	c.Bind(&data)
+	err := services.DefaultServicer().UpgradeComponnet(data.Name, data.Version)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),

@@ -101,11 +101,47 @@ func (s CommonServicer) InstallComponnet(name, version string) error {
 }
 
 func (s CommonServicer) UninstallComponnet(name string) error {
-	// TODO:
+	sysCompConfigs, err := CachedSysComponentConfigs()
+	if err != nil {
+		return err
+	}
+
+	target, ok := sysCompConfigs[name]
+	if !ok {
+		return errors.New("sys component not found")
+	}
+	comp, err := s.RegionClient.CoreV1alpha1().SysComponents(target.Namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	comp.Status.Phase = v1alpha1.SysComponentUnInstalling
+	_, err = s.RegionClient.CoreV1alpha1().SysComponents(target.Namespace).UpdateStatus(context.TODO(), comp, metav1.UpdateOptions{})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (s CommonServicer) UpgradeComponnet(name, version string) error {
-	// TODO:
+	sysCompConfigs, err := CachedSysComponentConfigs()
+	if err != nil {
+		return err
+	}
+
+	target, ok := sysCompConfigs[name]
+	if !ok {
+		return errors.New("sys component not found")
+	}
+	comp, err := s.RegionClient.CoreV1alpha1().SysComponents(target.Namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	comp.Spec.CurrentVersion = version
+	_, err = s.RegionClient.CoreV1alpha1().SysComponents(target.Namespace).Update(context.TODO(), comp, metav1.UpdateOptions{})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

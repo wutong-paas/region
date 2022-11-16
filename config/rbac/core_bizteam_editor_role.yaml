@@ -1,0 +1,24 @@
+# permissions for end users to edit bizteams.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: bizteam-editor-role
+rules:
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizteams
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizteams/status
+  verbs:
+  - get

@@ -38,8 +38,7 @@ func (r *Router) sysComponents() *Router {
 	sysComponents := r.SubRouter("/sys-components")
 	sysComponents.GET("", handlers.ListSysComponents)
 	sysComponents.POST("", handlers.InstallSysComponent)
-	//sysComponents.GET("/:name", handlers.GetSysComponent)
-	//sysComponents.DELETE("/:name", handlers.DeleteSysComponent)
-	//sysComponents.GET("/:name/status", handlers.GetSysComponentStatus)
+	sysComponents.PUT("", handlers.UpgradeSysComponent)
+	sysComponents.DELETE("", handlers.UninstallSysComponent)
 	return sysComponents
 }

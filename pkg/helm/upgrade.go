@@ -25,7 +25,6 @@ import (
 
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli/values"
 	"helm.sh/helm/v3/pkg/downloader"
@@ -34,9 +33,8 @@ import (
 	"k8s.io/klog/v2"
 )
 
-// Install
-func Install(releaseName, chartName, namespace, version string, kvs map[string]string) (*release.Release, error) {
-	client := action.NewInstall(actionConfiguration(namespace))
+func Upgrade(releaseName, chartName, namespace, version string, kvs map[string]string) (*release.Release, error) {
+	client := action.NewUpgrade(actionConfiguration(namespace))
 	client.Version = version
 
 	debug("Original chart version: %q", client.Version)
@@ -44,8 +42,6 @@ func Install(releaseName, chartName, namespace, version string, kvs map[string]s
 		debug("setting version to >0.0.0-0")
 		client.Version = ">0.0.0-0"
 	}
-
-	client.ReleaseName = releaseName
 
 	cp, err := client.ChartPathOptions.LocateChart(chartName, settings)
 	if err != nil {
@@ -123,20 +119,9 @@ func Install(releaseName, chartName, namespace, version string, kvs map[string]s
 	signal.Notify(cSignal, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-cSignal
-		klog.Infof("Install release %s has been cancelled.\n", chartName)
+		klog.Infof("Upgrade release %s has been cancelled.\n", chartName)
 		cancel()
 	}()
 
-	return client.RunWithContext(ctx, chartRequested, vals)
-}
-
-// checkIfInstallable validates if a chart can be installed
-//
-// Application chart type is only installable
-func checkIfInstallable(ch *chart.Chart) error {
-	switch ch.Metadata.Type {
-	case "", "application":
-		return nil
-	}
-	return errors.Errorf("%s charts are not installable", ch.Metadata.Type)
+	return client.RunWithContext(ctx, releaseName, chartRequested, vals)
 }

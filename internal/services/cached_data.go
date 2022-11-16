@@ -18,6 +18,7 @@ package services
 
 import (
 	"github.com/wutong-paas/region/pkg/cache"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/yaml"
 )
@@ -27,16 +28,19 @@ const (
 )
 
 var (
-	cachedSysComponentConfigs map[string]*SysComponentConfig
+	cachedSysComponentConfigMap *v1.ConfigMap
+	cachedSysComponentConfigs   map[string]*SysComponentConfig
 )
 
 func CachedSysComponentConfigs() (map[string]*SysComponentConfig, error) {
-	if len(cachedSysComponentConfigs) == 0 {
-		sysCompConfigMap, err := cache.Store().ConfigMapLister.ConfigMaps(cache.SystemNamespace).Get(wtSysComponentConfigMapName)
-		if err != nil {
-			klog.Errorf("failed to get syscomponents configmap: %v", err)
-			return cachedSysComponentConfigs, err
-		}
+	// var cachedSysComponentConfigs map[string]*SysComponentConfig
+	sysCompConfigMap, err := cache.Store().ConfigMapLister.ConfigMaps(cache.SystemNamespace).Get(wtSysComponentConfigMapName)
+	if err != nil {
+		klog.Errorf("failed to get syscomponents configmap: %v", err)
+		return cachedSysComponentConfigs, err
+	}
+	if len(cachedSysComponentConfigs) == 0 || cachedSysComponentConfigMap.ResourceVersion != sysCompConfigMap.ResourceVersion {
+		cachedSysComponentConfigMap = sysCompConfigMap
 		content := sysCompConfigMap.Data["syscomponents.yaml"]
 		err = yaml.Unmarshal([]byte(content), &cachedSysComponentConfigs)
 		if err != nil {

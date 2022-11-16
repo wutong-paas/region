@@ -1,0 +1,6 @@
+apiVersion: core.wutong.io/v1alpha1
+kind: BizTeam
+metadata:
+  name: bizteam-sample
+spec:
+  # TODO(user): Add fields here

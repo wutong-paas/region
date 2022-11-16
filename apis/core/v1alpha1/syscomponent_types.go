@@ -53,13 +53,15 @@ type SysComponentSpec struct {
 }
 
 const (
-	SysComponentInstalled    = "Installed"
-	SysComponentUnInstalled  = "UnInstalled"
-	SysComponentInstalling   = "Installing"
-	SysComponentUnInstalling = "UnInstalling"
-	SysComponentUpgrading    = "Upgrading"
-	SysComponentAbnormal     = "Abnormal"
-	SysComponentUnknown      = "Unknown"
+	SysComponentInstalled      = "Installed"
+	SysComponentUnInstalled    = "UnInstalled"
+	SysComponentInstalling     = "Installing"
+	SysComponentPendingInstall = "PendingInstall"
+	SysComponentUnInstalling   = "UnInstalling"
+	SysComponentUpgrading      = "Upgrading"
+	SysComponentPendingUpgrade = "PendingUpgrade"
+	// SysComponentAbnormal       = "Abnormal"
+	// SysComponentUnknown        = "Unknown"
 )
 
 // SysComponentStatus defines the observed state of SysComponent

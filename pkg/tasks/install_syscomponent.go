@@ -28,11 +28,11 @@ import (
 )
 
 type installSysComponentTask struct {
-	Instance *v1alpha1.SysComponent
+	sysComponentTask
 }
 
 func NewInstallSysComponentTask(instance *v1alpha1.SysComponent) *installSysComponentTask {
-	return &installSysComponentTask{Instance: instance}
+	return &installSysComponentTask{sysComponentTask: sysComponentTask{Instance: instance}}
 }
 
 func (t *installSysComponentTask) Run() error {
@@ -44,7 +44,6 @@ func (t *installSysComponentTask) Run() error {
 	default:
 		return errors.New("install way is not supported")
 	}
-	return nil
 }
 
 func (t *installSysComponentTask) byHelm() error {
@@ -58,19 +57,21 @@ func (t *installSysComponentTask) byHelm() error {
 	}
 
 	// Step 2: helm install
-	r, err := helm.Install(t.Instance.Name, fmt.Sprintf("%s/%s", ver.HelmRepoName, ver.HelmChartName), t.Instance.Namespace, map[string]string{})
+	r, err := helm.Install(t.Instance.Name, fmt.Sprintf("%s/%s", ver.HelmRepoName, ver.HelmChartName), t.Instance.Namespace, t.Instance.Spec.CurrentVersion, map[string]string{})
 	if err != nil {
 		t.setErrorStatus(err)
 		return err
 	}
 
+	t.Instance.Status.Phase = v1alpha1.SysComponentInstalling
+
 	switch r.Info.Status {
 	case release.StatusDeployed:
 		t.Instance.Status.Phase = v1alpha1.SysComponentInstalled
-	case release.StatusUnknown:
-		t.Instance.Status.Phase = v1alpha1.SysComponentUnknown
-	case release.StatusFailed:
-		t.Instance.Status.Phase = v1alpha1.SysComponentAbnormal
+		// case release.StatusUnknown:
+		// 	t.Instance.Status.Phase = v1alpha1.SysComponentUnknown
+		// case release.StatusFailed:
+		// 	t.Instance.Status.Phase = v1alpha1.SysComponentAbnormal
 	}
 
 	t.Instance.Status.Message = r.Info.Description
@@ -108,9 +109,4 @@ func (t *installSysComponentTask) byApply() error {
 	t.Instance.Status.Phase = v1alpha1.SysComponentInstalled
 	t.Instance.Status.Message = "resouces applied."
 	return nil
-}
-
-func (t *installSysComponentTask) setErrorStatus(err error) {
-	t.Instance.Status.Phase = v1alpha1.SysComponentAbnormal
-	t.Instance.Status.Message = err.Error()
 }

@@ -18,6 +18,7 @@ package helm
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,6 +35,8 @@ import (
 // RepoAdd
 func RepoAdd(repoName, repoUrl string) error {
 	// Ensure the file directory exists as it is required for file locking
+	fmt.Printf("settings.RepositoryCache: %v\n", settings.RepositoryCache)
+	fmt.Printf("settings.RepositoryConfig: %v\n", settings.RepositoryConfig)
 	err := os.MkdirAll(filepath.Dir(settings.RepositoryConfig), os.ModePerm)
 	if err != nil && !os.IsExist(err) {
 		return err
@@ -137,7 +140,7 @@ func RepoAdd(repoName, repoUrl string) error {
 
 	f.Update(&repoEntry)
 
-	if err := f.WriteFile(settings.RepositoryCache, 0644); err != nil {
+	if err := f.WriteFile(settings.RepositoryConfig, 0644); err != nil {
 		return err
 	}
 	klog.Infof("%q has been added to your repositories\n", repoName)

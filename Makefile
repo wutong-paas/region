@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= swr.cn-southwest-2.myhuaweicloud.com/wutong/region:0.0.1-dev
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.24.2
 
@@ -69,12 +69,15 @@ run: manifests generate fmt vet ## Run a controller from your host.
 	go run ./main.go
 
 .PHONY: docker-build
-docker-build: test ## Build docker image with the manager.
+docker-build: ## Build docker image with the manager.
 	docker build -t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
 	docker push ${IMG}
+
+.PHONY: docker-build-push
+docker-build-push: docker-build docker-push ## Push docker image with the manager.
 
 ##@ Deployment
 

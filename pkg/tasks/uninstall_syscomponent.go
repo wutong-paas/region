@@ -17,29 +17,90 @@ limitations under the License.
 package tasks
 
 import (
-	"os/exec"
+	"errors"
+	"fmt"
 
 	"github.com/wutong-paas/region/apis/core/v1alpha1"
+	"github.com/wutong-paas/region/pkg/helm"
+	"github.com/wutong-paas/region/pkg/kube"
+	"helm.sh/helm/v3/pkg/release"
+	controllerruntime "sigs.k8s.io/controller-runtime"
 )
 
 type uninstallSysComponentTask struct {
-	Instance *v1alpha1.SysComponent
+	sysComponentTask
 }
 
 func NewUninstallSysComponentTask(instance *v1alpha1.SysComponent) *uninstallSysComponentTask {
-	return &uninstallSysComponentTask{Instance: instance}
+	return &uninstallSysComponentTask{sysComponentTask: sysComponentTask{Instance: instance}}
 }
 
 func (t *uninstallSysComponentTask) Run() error {
-	err := exec.Command("helm", "uninstall", t.Instance.Name, "--namespace", t.Instance.Namespace).Run()
+	switch t.Instance.Spec.InstallWay {
+	case v1alpha1.InstallHelm:
+		return t.byHelm()
+	case v1alpha1.InstallApply:
+		return t.byApply()
+	default:
+		return errors.New("install way is not supported")
+	}
+}
+
+func (t *uninstallSysComponentTask) byHelm() error {
+	r, err := helm.Uninstall(t.Instance.Name, t.Instance.Namespace)
 	if err != nil {
-		t.Instance.Status.Phase = v1alpha1.SysComponentAbnormal
-		t.Instance.Status.Message = "helm uninstall failed"
+		t.setErrorStatus(err)
 		return err
 	}
 
-	t.Instance.Status.Phase = v1alpha1.SysComponentUnInstalled
-	t.Instance.Status.Message = "uninstall completed"
+	if r == nil {
+		t.Instance.Status.Phase = v1alpha1.SysComponentUnInstalled
+		t.Instance.Status.Message = "sys component uninstalled"
+		return nil
+	}
 
+	switch r.Info.Status {
+	case release.StatusUninstalled:
+		t.Instance.Status.Phase = v1alpha1.SysComponentUnInstalled
+		// case release.StatusUnknown:
+		// 	t.Instance.Status.Phase = v1alpha1.SysComponentUnknown
+		// case release.StatusFailed:
+		// 	t.Instance.Status.Phase = v1alpha1.SysComponentAbnormal
+	}
+
+	t.Instance.Status.Message = r.Info.Description
+	return nil
+}
+
+func (t *uninstallSysComponentTask) byApply() error {
+	ver := t.Instance.Spec.AvailableVersions[t.Instance.Spec.CurrentVersion]
+
+	var content string
+	if ver.ApplyFileContent != "" {
+		content = ver.ApplyFileContent
+	} else {
+		if ver.ApplyFileUrl != "" {
+			contentBytes, err := kube.Download(ver.ApplyFileUrl)
+			if err != nil {
+				t.setErrorStatus(err)
+				return fmt.Errorf("download file from [%s] failed: %s", ver.ApplyFileUrl, err.Error())
+			}
+			content = string(contentBytes)
+		} else {
+			err := errors.New("sys component configurations is not valid")
+			t.setErrorStatus(err)
+			return err
+		}
+	}
+	exector := kube.NewApplyExector(content, t.Instance.Namespace, controllerruntime.GetConfigOrDie())
+
+	err := exector.Delete()
+
+	if err != nil {
+		t.setErrorStatus(err)
+		return err
+	}
+	t.Instance.Status.Phase = v1alpha1.SysComponentInstalled
+	t.Instance.Status.Message = "resouces applied."
 	return nil
 }

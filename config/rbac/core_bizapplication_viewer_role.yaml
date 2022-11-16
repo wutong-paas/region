@@ -1,0 +1,20 @@
+# permissions for end users to view bizapplications.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: bizapplication-viewer-role
+rules:
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizapplications
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - core.wutong.io
+  resources:
+  - bizapplications/status
+  verbs:
+  - get

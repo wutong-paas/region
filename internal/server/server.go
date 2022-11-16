@@ -21,7 +21,7 @@ func NewServer() *server {
 	port := os.Getenv("APP_PORT")
 	pathBase := os.Getenv("APP_PATH_BASE")
 	if port == "" {
-		port = "8081"
+		port = "8082"
 	}
 	engine := gin.Default()
 	engine.SetTrustedProxies([]string{"0.0.0.0"})

@@ -33,4 +33,22 @@ resources:
   kind: SysComponent
   path: github.com/wutong-paas/region/apis/core/v1alpha1
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: wutong.io
+  group: core
+  kind: BizTeam
+  path: github.com/wutong-paas/region/apis/core/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: wutong.io
+  group: core
+  kind: BizApplication
+  path: github.com/wutong-paas/region/apis/core/v1alpha1
+  version: v1alpha1
 version: "3"

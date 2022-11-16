@@ -7,8 +7,25 @@ metadata:
     creator: Wutong
 data:
   syscomponents.yaml: |
+    nginx:
+      availableVersions:
+        1.0.0:
+          helmChartName: myapp
+          helmRepoName: mycharts
+          helmRepoUrl: https://srcio.github.io/helm-charts
+        1.0.1:
+          helmChartName: myapp
+          helmRepoName: mycharts
+          helmRepoUrl: https://srcio.github.io/helm-charts
+      description: 测试系统组件 Nginx
+      installWay: helm
+      namespace: test
     test-redis:
       availableVersions:
+        17.3.9:
+          helmChartName: redis
+          helmRepoName: bitnami
+          helmRepoUrl: https://charts.bitnami.com/bitnami
         17.3.8:
           helmChartName: redis
           helmRepoName: bitnami
